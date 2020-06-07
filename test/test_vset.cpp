@@ -4,7 +4,6 @@
 
 #include <gtest/gtest.h>
 
-#include <ltc/ltc.hpp>
 #include <ltc/range.hpp>
 #include <ltc/vset.hpp>
 

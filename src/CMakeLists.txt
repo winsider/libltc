@@ -5,6 +5,7 @@ add_library(libltc STATIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/ltc/vmap.hpp>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/ltc/vset.hpp>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/ltc/range.hpp>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/ltc/avector.hpp>
 )
 
 target_include_directories(libltc
