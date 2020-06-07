@@ -76,7 +76,7 @@ namespace ltc
         {
             assert(pos >= m_storage.begin() && pos <= m_end);
             const auto count = last - first;
-            if (size() + count > capacity()) throw std::length_error("insert");
+            if (size() + count > N) throw std::length_error("insert");
             iterator it = m_storage.begin() + (pos - m_storage.begin());
             std::move_backward(it, m_end, m_end + count);
             std::copy(first, last, it);
@@ -87,7 +87,7 @@ namespace ltc
         iterator insert(const_iterator pos, const T &value)
         {
             assert(pos >= m_storage.begin() && pos <= m_end);
-            if (size() == capacity()) throw std::length_error("insert");
+            if (size() == N) throw std::length_error("insert");
             iterator it = m_storage.begin() + (pos - m_storage.begin());
             std::move_backward(it, m_end, m_end + 1);
             *it = value;
@@ -98,7 +98,7 @@ namespace ltc
         iterator insert(const_iterator pos, T &&value)
         {
             assert(pos >= m_storage.begin() && pos <= m_end);
-            if (size() == capacity()) throw std::length_error("insert");
+            if (size() == N) throw std::length_error("insert");
             iterator it = m_storage.begin() + (pos - m_storage.begin());
             std::move_backward(it, m_end, m_end + 1);
             *it = std::move(value);
@@ -109,7 +109,7 @@ namespace ltc
         iterator insert(const_iterator pos, size_type count, const T &value)
         {
             assert(pos >= m_storage.begin() && pos <= m_end);
-            if (size() + count > capacity()) throw std::length_error("insert");
+            if (size() + count > N) throw std::length_error("insert");
             iterator it = m_storage.begin() + (pos - m_storage.begin());
             std::move_backward(it, m_end, m_end + count);
             std::fill(it, it + count, value);
@@ -120,6 +120,22 @@ namespace ltc
         iterator insert(const_iterator pos, std::initializer_list<T> ilist)
         {
             return insert(pos, ilist.begin(), ilist.end());
+        }
+
+        template <class... Args> iterator emplace(const_iterator pos, Args &&... args)
+        {
+            assert(pos >= m_storage.begin() && pos <= m_end);
+            iterator it = m_storage.begin() + (pos - m_storage.begin());
+            new (it) T(args...);
+            return it;
+        }
+
+        template <class... Args> reference emplace_back(Args &&... args)
+        {
+            if (size() == N) throw std::length_error("emplace_back");
+            iterator it = m_end++;
+            new (it) T(args...);
+            return *it;
         }
 
     private:

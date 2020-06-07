@@ -127,3 +127,19 @@ TEST_F(Test_avector, access)
     ASSERT_EQ(v.front(), 1);
     ASSERT_EQ(v.back(), 3);
 }
+
+TEST_F(Test_avector, emplace)
+{
+    avector<std::string, 1> v = { "0" };
+    const auto it = v.emplace(v.begin(), "1");
+    ASSERT_EQ(*it, "1");
+    ASSERT_EQ(v.size(), 1);
+}
+
+TEST_F(Test_avector, emplace_back)
+{
+    avector<std::string, 2> v = { "0" };
+    const auto r = v.emplace_back("1");
+    ASSERT_EQ(r, "1");
+    ASSERT_EQ(v.size(), 2);
+}
