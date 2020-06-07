@@ -21,6 +21,8 @@ namespace ltc
         using storage_type = typename std::array<T, N>;
         using iterator = typename storage_type::iterator;
         using const_iterator = typename storage_type::const_iterator;
+        using reverse_iterator = typename storage_type::reverse_iterator;
+        using const_reverse_iterator = typename storage_type::const_reverse_iterator;
 
         avector() { m_end = m_storage.begin(); }
         avector(std::initializer_list<T> init)
@@ -29,8 +31,17 @@ namespace ltc
         }
 
         // Iterators
-        iterator begin() { return m_storage.begin(); }
-        iterator end() { return m_end; }
+        iterator begin() noexcept { return m_storage.begin(); }
+        const_iterator begin() const noexcept { return m_storage.begin(); }
+        iterator end() noexcept { return m_end; }
+        const_iterator end() const noexcept { return m_end; }
+        reverse_iterator rbegin() noexcept { return std::make_reverse_iterator(m_end); }
+        const_reverse_iterator rbegin() const noexcept { return std::make_reverse_iterator(m_end); }
+        reverse_iterator rend() noexcept { return std::make_reverse_iterator(m_storage.begin()); }
+        const_reverse_iterator rend() const noexcept
+        {
+            return std::make_reverse_iterator(m_storage.begin());
+        }
 
         // Capacity
         bool empty() const noexcept { return m_storage.begin() == m_end; };
@@ -44,21 +55,33 @@ namespace ltc
         void shrink_to_fit() { /* no op */}
 
         // Element access
-        reference at(size_type pos)
-        {
-            return m_storage[pos];
-        }
+        reference at(size_type pos) { return m_storage[pos]; }
+        const_reference at(size_type pos) const { return m_storage[pos]; }
+        reference operator[](size_type pos) { return m_storage[pos]; }
+        const_reference operator[](size_type pos) const { return m_storage[pos]; }
 
-        const_reference at(size_type pos) const
-        {
-            return m_storage[pos];
-        }
+        reference front() { return m_storage.front(); }
+        const_reference front() const { return m_storage.front(); }
+        reference back() { return *rbegin(); }
+        const_reference back() const { return *rbegin(); }
 
         // Modifiers
         void clear() noexcept
         {
             m_storage.fill(T());
             m_end = m_storage.begin();
+        }
+
+        template <class InputIt> iterator insert(const_iterator pos, InputIt first, InputIt last)
+        {
+            assert(pos >= m_storage.begin() && pos <= m_end);
+            const auto count = last - first;
+            if (size() + count > capacity()) throw std::length_error("insert");
+            iterator it = m_storage.begin() + (pos - m_storage.begin());
+            std::move_backward(it, m_end, m_end + count);
+            std::copy(first, last, it);
+            m_end += count;
+            return it;
         }
 
         iterator insert(const_iterator pos, const T &value)
@@ -92,6 +115,11 @@ namespace ltc
             std::fill(it, it + count, value);
             m_end += count;
             return it;
+        }
+
+        iterator insert(const_iterator pos, std::initializer_list<T> ilist)
+        {
+            return insert(pos, ilist.begin(), ilist.end());
         }
 
     private:

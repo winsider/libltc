@@ -1,4 +1,5 @@
 #include <iostream>
+#include <numeric>
 #include <sstream>
 #include <string>
 
@@ -11,8 +12,7 @@ using namespace ltc;
 class Test_avector : public ::testing::Test
 {
 protected:
-    template<typename InputIter>
-    std::string to_str(InputIter first, InputIter last)
+    template <typename InputIter> std::string to_str(InputIter first, InputIter last)
     {
         std::stringstream ss;
         std::for_each(first, last, [&ss](const auto &i) { ss << i; });
@@ -38,6 +38,16 @@ TEST_F(Test_avector, constructor_initializer_list)
     ASSERT_EQ(v.max_size(), 5);
     ASSERT_EQ(v.capacity(), 5);
     ASSERT_EQ(to_str(v.begin(), v.end()), "123");
+}
+
+TEST_F(Test_avector, iterators)
+{
+    avector<int, 5> v = { 1, 2, 3 };
+    ASSERT_EQ(*v.begin(), 1);
+    ASSERT_EQ(*v.rbegin(), 3);
+    ASSERT_EQ(*(v.begin() + 1), 2);
+    ASSERT_EQ(std::accumulate(v.begin(), v.end(), 0), 6);
+    ASSERT_EQ(std::accumulate(v.rbegin(), v.rend(), 0), 6);
 }
 
 TEST_F(Test_avector, clear)
@@ -81,10 +91,39 @@ TEST_F(Test_avector, insert_2)
 
 TEST_F(Test_avector, insert_3)
 {
-    avector<int, 5> v = { 1, 2, 3 };
-    int five = 6;
-    auto it = v.insert(v.end(), 2, 6);
-    ASSERT_EQ(*it, 6);
+    avector<std::string, 5> v = { "1", "2", "3" };
+    auto it = v.insert(v.end(), 2, "6");
+    ASSERT_EQ(*it, "6");
     ASSERT_EQ(v.size(), 5);
     ASSERT_EQ(to_str(v.begin(), v.end()), "12366");
+}
+
+TEST_F(Test_avector, insert_4)
+{
+    avector<int, 6> v = { 1, 2, 3 };
+    auto d = { 3, 2, 1 };
+    v.insert(v.begin(), d.begin(), d.end());
+    ASSERT_EQ(v.size(), 6);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "321123");
+}
+
+TEST_F(Test_avector, insert_5)
+{
+    avector<int, 6> v = { 1, 2, 3 };
+    v.insert(v.begin(), { 3, 2, 1 });
+    ASSERT_EQ(v.size(), 6);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "321123");
+}
+
+TEST_F(Test_avector, access)
+{
+    avector<int, 5> v = { 1, 2, 3 };
+    ASSERT_EQ(v[0], 1);
+    ASSERT_EQ(v[1], 2);
+    ASSERT_EQ(v[2], 3);
+    ASSERT_EQ(v.at(0), 1);
+    ASSERT_EQ(v.at(1), 2);
+    ASSERT_EQ(v.at(2), 3);
+    ASSERT_EQ(v.front(), 1);
+    ASSERT_EQ(v.back(), 3);
 }
