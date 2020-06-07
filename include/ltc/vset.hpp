@@ -11,35 +11,22 @@
 namespace ltc
 {
 
-    template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<const Key, T>>>
+    template <class Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key>>
     class vset
     {
     public:
         using key_type = Key;
-        using mapped_type = T;
-        using value_type = std::pair<Key, T>;
+        using value_type = Key;
         using size_type = std::size_t;
         using difference_type = std::ptrdiff_t;
         using key_compare = Compare;
+        using value_compare = Compare;
         using storage_type = std::vector<value_type, Allocator>;
         using iterator = typename storage_type::iterator;
         using const_iterator = typename storage_type::const_iterator;
         using reverse_iterator = typename storage_type::reverse_iterator;
         using const_reverse_iterator = typename storage_type::const_reverse_iterator;
         using allocator_type = Allocator;
-
-        class value_compare
-        {
-            key_compare m_key_comp;
-
-        public:
-            value_compare(const key_compare &key_comp) : m_key_comp(key_comp) {}
-
-            bool operator()(const value_type &a, const value_type &b) const
-            {
-                return m_key_comp(a.first, b.first);
-            }
-        };
 
         // Construction
         vset() : m_key_comp(key_compare()), m_value_comp(key_compare()), m_storage(Allocator()) {}
@@ -124,38 +111,6 @@ namespace ltc
             return *this;
         }
 
-        // Element access
-        T &at(const Key &key)
-        {
-            auto value = value_type(key, mapped_type());
-            auto it = std::lower_bound(m_storage.begin(), m_storage.end(), value, m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(value.first, it->first)) return it->second;
-            throw std::out_of_range("key");
-        }
-        const T &at(const Key &key) const
-        {
-            auto value = value_type(key, mapped_type());
-            auto it = std::lower_bound(m_storage.begin(), m_storage.end(), value, m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(value.first, it->first)) return it->second;
-            throw std::out_of_range("key");
-        }
-
-        T &operator[](const Key &key)
-        {
-            auto value = value_type(key, mapped_type());
-            auto it = std::lower_bound(m_storage.begin(), m_storage.end(), value, m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(value.first, it->first)) return it->second;
-            return m_storage.insert(it, std::move(value))->second;
-        }
-
-        T &operator[](Key &&key)
-        {
-            auto value = value_type(std::move(key), mapped_type());
-            auto it = std::lower_bound(m_storage.begin(), m_storage.end(), value, m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(value.first, it->first)) return it->second;
-            return m_storage.insert(it, std::move(value))->second;
-        }
-
         // Iterators
         iterator begin() noexcept { return m_storage.begin(); }
 
@@ -182,7 +137,7 @@ namespace ltc
         std::pair<iterator, bool> insert(const value_type &value)
         {
             auto it = std::lower_bound(m_storage.begin(), m_storage.end(), value, m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(value.first, it->first))
+            if (it != m_storage.end() && !m_key_comp(value, *it))
                 return std::make_pair(it, false);
             return std::make_pair(m_storage.insert(it, value), true);
         }
@@ -190,7 +145,7 @@ namespace ltc
         std::pair<iterator, bool> insert(value_type &&value)
         {
             auto it = std::lower_bound(m_storage.begin(), m_storage.end(), value, m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(value.first, it->first))
+            if (it != m_storage.end() && !m_key_comp(value, *it))
                 return std::make_pair(it, false);
             return std::make_pair(m_storage.insert(it, std::move(value)), true);
         }
@@ -199,7 +154,7 @@ namespace ltc
         {
             // TODO: Make use of hint
             auto it = std::lower_bound(m_storage.begin(), m_storage.end(), value, m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(value.first, it->first)) return it;
+            if (it != m_storage.end() && !m_key_comp(value, *it)) return it;
             return m_storage.insert(it, value);
         }
 
@@ -207,7 +162,7 @@ namespace ltc
         {
             // TODO: Make use of hint
             auto it = std::lower_bound(m_storage.begin(), m_storage.end(), value, m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(value.first, it->first)) return it;
+            if (it != m_storage.end() && !m_key_comp(value, *it)) return it;
             return m_storage.insert(it, std::move(value));
         }
 
@@ -254,83 +209,82 @@ namespace ltc
         iterator find(const Key &key)
         {
             auto it = std::lower_bound(m_storage.begin(), m_storage.end(),
-                                       value_type(key, mapped_type()), m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(key, it->first)) return it;
+                                       key, m_value_comp);
+            if (it != m_storage.end() && !m_key_comp(key, *it)) return it;
             return m_storage.end();
         }
 
         const_iterator find(const Key &key) const
         {
             auto it = std::lower_bound(m_storage.begin(), m_storage.end(),
-                                       value_type(key, mapped_type()), m_value_comp);
-            if (it != m_storage.end() && !m_key_comp(key, it->first)) return it;
+                                       key, m_value_comp);
+            if (it != m_storage.end() && !m_key_comp(key, *it)) return it;
             return m_storage.end();
         }
 
         std::pair<iterator, iterator> equal_range(const Key &key)
         {
             return std::equal_range(m_storage.begin(), m_storage.end(),
-                                    value_type(key, mapped_type()), m_value_comp);
+                                    key, m_value_comp);
         }
 
         std::pair<const_iterator, const_iterator> equal_range(const Key &key) const
         {
             return std::equal_range(m_storage.begin(), m_storage.end(),
-                                    value_type(key, mapped_type()), m_value_comp);
+                                    key, m_value_comp);
         }
 
         template <class K> std::pair<iterator, iterator> equal_range(const K &x)
         {
-            return std::equal_range(m_storage.begin(), m_storage.end(), value_type(x, mapped_type()), m_value_comp);
+            return std::equal_range(m_storage.begin(), m_storage.end(), x, m_value_comp);
         }
 
         template <class K> std::pair<const_iterator, const_iterator> equal_range(const K &x) const
         {
-            return std::equal_range(m_storage.begin(), m_storage.end(), value_type(x, mapped_type()), m_value_comp);
+            return std::equal_range(m_storage.begin(), m_storage.end(), x, m_value_comp);
         }
 
         iterator lower_bound(const Key &key)
         {
             return std::lower_bound(m_storage.begin(), m_storage.end(),
-                                    value_type(key, mapped_type()), m_value_comp);
+                                    key, m_value_comp);
         }
 
         const_iterator lower_bound(const Key &key) const
         {
             return std::lower_bound(m_storage.begin(), m_storage.end(),
-                                    value_type(key, mapped_type()), m_value_comp);
+                                    key, m_value_comp);
         }
 
         template <class K> iterator lower_bound(const K &x)
         {
-            return std::lower_bound(m_storage.begin(), m_storage.end(), value_type(x, mapped_type()), m_value_comp);
+            return std::lower_bound(m_storage.begin(), m_storage.end(), x, m_value_comp);
         }
 
         template <class K> const_iterator lower_bound(const K &x) const
         {
-            return std::lower_bound(m_storage.begin(), m_storage.end(), value_type(x, mapped_type()), m_value_comp);
+            return std::lower_bound(m_storage.begin(), m_storage.end(), x, m_value_comp);
         }
 
         iterator upper_bound( const Key& key )
         {
-            return std::upper_bound(m_storage.begin(), m_storage.end(), value_type(key,
-            mapped_type()), m_value_comp);
+            return std::upper_bound(m_storage.begin(), m_storage.end(), key, m_value_comp);
         }
 
         const_iterator upper_bound(const Key &key) const
         {
             return std::upper_bound(m_storage.begin(), m_storage.end(),
-                                    value_type(key, mapped_type()), m_value_comp);
+                                    key, m_value_comp);
         }
 
         template <class K> iterator upper_bound(const K &x)
         {
-            return std::upper_bound(m_storage.begin(), m_storage.end(), value_type(x, mapped_type()), m_value_comp);
+            return std::upper_bound(m_storage.begin(), m_storage.end(), x, m_value_comp);
         }
 
         template <class K> const_iterator upper_bound(const K &x) const
         {
-            return std::upper_bound(m_storage.begin(), m_storage.end(), value_type(x, mapped_type()), m_value_comp);
+            return std::upper_bound(m_storage.begin(), m_storage.end(), x, m_value_comp);
         }
 
         // Observers
