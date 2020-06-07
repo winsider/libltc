@@ -124,8 +124,9 @@ namespace ltc
 
         template <class... Args> iterator emplace(const_iterator pos, Args &&... args)
         {
-            assert(pos >= m_storage.begin() && pos <= m_end);
+            assert(pos >= m_storage.begin() && pos < m_end);
             iterator it = m_storage.begin() + (pos - m_storage.begin());
+            it->~T();
             new (it) T(args...);
             return it;
         }
@@ -136,6 +137,80 @@ namespace ltc
             iterator it = m_end++;
             new (it) T(args...);
             return *it;
+        }
+
+        iterator erase(const_iterator pos)
+        {
+            assert(pos >= m_storage.begin() && pos < m_end);
+            iterator it = m_storage.begin() + (pos - m_storage.begin());
+            std::move(it + 1, m_end, it);
+            m_end->~T();
+            --m_end;
+            return it;
+        }
+
+        iterator erase(const_iterator first, const_iterator last)
+        {
+            assert(first >= m_storage.begin() && first < m_end);
+            assert(last >= m_storage.begin() && last < m_end);
+            assert(first <= last);
+            iterator it = m_storage.begin() + (first - m_storage.begin());
+            if (first != last)
+            {
+                const auto count = last - first;
+                std::move(it + count, m_end, it);
+                m_end->~T();
+                m_end -= count;
+            }
+            return it;
+        }
+
+        void push_back(const T &value)
+        {
+            if (size() == N) throw std::length_error("push_back");
+            iterator it = m_end++;
+            *it = value;
+        }
+
+        void push_back(T &&value)
+        {
+            if (size() == N) throw std::length_error("push_back");
+            iterator it = m_end++;
+            *it = std::move(value);
+        }
+
+        void pop_back()
+        {
+            assert(m_end > cbegin());
+            m_end->~T();
+            --m_end;
+        }
+
+        void resize(size_type count)
+        {
+            resize(count, T());
+        }
+
+        void resize(size_type count, const value_type &value)
+        {
+            if (count > N) throw std::length_error("resize");
+            const auto sz = size();
+            if (count > sz)
+            {
+                const auto inc = count - sz;
+                std::fill(m_end, m_end + inc, value);
+                m_end += inc;
+            }
+            else if (count < sz)
+            {
+                const auto dec = sz - count;
+                auto new_end = m_end - dec;
+                while (new_end != m_end)
+                {
+                    m_end->~T();
+                    --m_end;
+                }
+            }
         }
 
     private:

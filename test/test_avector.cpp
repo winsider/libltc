@@ -143,3 +143,97 @@ TEST_F(Test_avector, emplace_back)
     ASSERT_EQ(r, "1");
     ASSERT_EQ(v.size(), 2);
 }
+
+TEST_F(Test_avector, erase_1)
+{
+    avector<int, 5> v = { 1, 2, 3 };
+    v.erase(v.begin()+1);
+    ASSERT_EQ(v.size(), 2);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "13");
+}
+
+TEST_F(Test_avector, erase_2)
+{
+    avector<std::string, 5> v = { "1", "2", "3", "4", "5" };
+    v.erase(v.begin(), v.end());
+    ASSERT_EQ(to_str(v.begin(), v.end()), "");
+}
+
+TEST_F(Test_avector, erase_3)
+{
+    avector<std::string, 5> v = { "1", "2", "3", "4", "5" };
+    v.erase(v.begin(), v.end() - 2);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "45");
+}
+
+TEST_F(Test_avector, erase_4)
+{
+    avector<std::string, 5> v = { "1", "2", "3", "4", "5" };
+    v.erase(v.begin()+2, v.end());
+    ASSERT_EQ(to_str(v.begin(), v.end()), "12");
+}
+
+TEST_F(Test_avector, erase_5)
+{
+    avector<std::string, 5> v = { "1", "2", "3", "4", "5" };
+    v.erase(v.begin()+2, v.end() - 2);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "1245");
+}
+
+TEST_F(Test_avector, push_back_1)
+{
+    avector<std::string, 1> v;
+    const std::string cval  = "1";
+    v.push_back(cval);
+    ASSERT_EQ(v.size(), 1);
+    ASSERT_EQ(v.front(), cval);
+}
+
+TEST_F(Test_avector, push_back_2)
+{
+    avector<std::string, 1> v;
+    std::string cval  = "1";
+    v.push_back(std::move(cval));
+    ASSERT_EQ(v.size(), 1);
+    ASSERT_EQ(v.front(), "1");
+    ASSERT_EQ(cval, "");
+}
+
+TEST_F(Test_avector, pop_back)
+{
+    avector<int, 5> v = { 1, 2, 3 };
+    v.pop_back();
+    ASSERT_EQ(to_str(v.begin(), v.end()), "12");
+    v.pop_back(); 
+    ASSERT_EQ(to_str(v.begin(), v.end()), "1");
+    v.pop_back(); 
+    ASSERT_TRUE(v.empty());
+}
+
+TEST_F(Test_avector, resize_1)
+{
+    avector<int, 5> v = { 1, 2, 3 };
+    v.resize(5);
+    ASSERT_EQ(v.size(), 5);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "12300");
+}
+
+TEST_F(Test_avector, resize_2)
+{
+    avector<int, 5> v = { 1, 2, 3, 4, 5 };
+    v.resize(3);
+    ASSERT_EQ(v.size(), 3);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "123");
+}
+
+TEST_F(Test_avector, resize_3)
+{
+    avector<int, 5> v = { 1, 2, 3 };
+    v.resize(5, 9);
+    ASSERT_EQ(v.size(), 5);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "12399");
+}
+
+
+
+
