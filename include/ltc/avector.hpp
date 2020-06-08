@@ -144,8 +144,7 @@ namespace ltc
             assert(pos >= m_storage.begin() && pos < m_end);
             iterator it = m_storage.begin() + (pos - m_storage.begin());
             std::move(it + 1, m_end, it);
-            m_end->~T();
-            --m_end;
+            pop_back();
             return it;
         }
 
@@ -186,10 +185,7 @@ namespace ltc
             --m_end;
         }
 
-        void resize(size_type count)
-        {
-            resize(count, T());
-        }
+        void resize(size_type count) { resize(count, T()); }
 
         void resize(size_type count, const value_type &value)
         {
@@ -206,10 +202,7 @@ namespace ltc
                 const auto dec = sz - count;
                 auto new_end = m_end - dec;
                 while (new_end != m_end)
-                {
-                    m_end->~T();
-                    --m_end;
-                }
+                    pop_back();
             }
         }
 
