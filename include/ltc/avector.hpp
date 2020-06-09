@@ -66,8 +66,9 @@ namespace ltc
             assert(pos >= m_storage.begin() && pos <= m_end);
             if (size() == capacity()) throw std::length_error("insert");
             iterator it = m_storage.begin() + (pos - m_storage.begin());
-            std::move_backward(it, m_end, ++m_end);
+            std::move_backward(it, m_end, m_end + 1);
             *it = value;
+            ++m_end;
             return it;
         }
 
@@ -76,8 +77,9 @@ namespace ltc
             assert(pos >= m_storage.begin() && pos <= m_end);
             if (size() == capacity()) throw std::length_error("insert");
             iterator it = m_storage.begin() + (pos - m_storage.begin());
-            std::move_backward(it, m_end, ++m_end);
+            std::move_backward(it, m_end, m_end + 1);
             *it = std::move(value);
+            ++m_end;
             return it;
         }
 
@@ -86,8 +88,9 @@ namespace ltc
             assert(pos >= m_storage.begin() && pos <= m_end);
             if (size() + count > capacity()) throw std::length_error("insert");
             iterator it = m_storage.begin() + (pos - m_storage.begin());
-            std::move_backward(it, m_end, m_end += count);
+            std::move_backward(it, m_end, m_end + count);
             std::fill(it, it + count, value);
+            m_end += count;
             return it;
         }
 

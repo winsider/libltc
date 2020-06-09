@@ -17,5 +17,3 @@ add_test(
 )
 
 target_compile_features(test_ltc PRIVATE cxx_std_14)
-
-

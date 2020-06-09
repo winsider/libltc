@@ -54,6 +54,7 @@ TEST_F(Test_avector, clear)
 TEST_F(Test_avector, insert_1)
 {
     avector<int, 5> v = { 1, 2, 3 };
+    ASSERT_EQ(v.size(), 3);
     ASSERT_EQ(v.at(0), 1);
     ASSERT_EQ(v.at(1), 2);
     ASSERT_EQ(v.at(2), 3);

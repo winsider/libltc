@@ -210,7 +210,8 @@ TEST_F(Test_vset, erase)
     ASSERT_EQ(m.erase("5"), 1);
     ASSERT_EQ(m.size(), 7);
 
-    ASSERT_EQ(m.erase(m.begin(), m.begin() + 3), m.begin());
+    const auto it2 = m.erase(m.begin(), m.begin() + 3);
+    ASSERT_EQ(it2, m.begin());
     ASSERT_EQ(m.size(), 4);
 }
 
