@@ -6,6 +6,7 @@ add_executable(test_ltc
 	test_vset.cpp
 	test_range.cpp
 	test_avector.cpp
+	test_amap.cpp
 )
 
 target_link_libraries(test_ltc gtest gtest_main libltc)

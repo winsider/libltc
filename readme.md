@@ -5,6 +5,14 @@ Simple C++ boot project for getting started with a CMake C++ project quickly.
      $ cd yourprojectname
      $ ./init.sh yourprojectname
     
+To regenerate make files:
+     
+     cmake -DCMAKE_BUILD_TYPE=Release ..
+
+or for debug:
+
+     cmake -DCMAKE_BUILD_TYPE=Debug ..
+
 
 ## IMGUI
 To add imgui to the project:
