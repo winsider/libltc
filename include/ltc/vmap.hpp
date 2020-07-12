@@ -11,7 +11,7 @@
 namespace ltc
 {
 
-    template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<const Key, T>>>
+    template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<Key, T>>>
     class vmap
     {
     public:
