@@ -135,6 +135,7 @@ namespace ltc
         {
             if (size() == N) throw std::length_error("emplace_back");
             iterator it = m_end++;
+            it->~T();
             new (it) T(args...);
             return *it;
         }
@@ -158,7 +159,6 @@ namespace ltc
             {
                 const auto count = last - first;
                 std::move(it + count, m_end, it);
-                m_end->~T();
                 m_end -= count;
             }
             return it;
@@ -181,8 +181,9 @@ namespace ltc
         void pop_back()
         {
             assert(m_end > cbegin());
-            m_end->~T();
             --m_end;
+            m_end->~T();
+            new (m_end) T();
         }
 
         void resize(size_type count) { resize(count, T()); }
