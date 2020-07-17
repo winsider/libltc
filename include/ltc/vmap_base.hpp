@@ -40,14 +40,23 @@ namespace ltc
         // Construction
         vmap_base() : m_key_comp(key_compare()), m_value_comp(key_compare()), m_storage() {}
 
+        explicit vmap_base(const Compare &comp)
+        : m_key_comp(comp), m_value_comp(comp), m_storage()
+        {
+        }
+
         explicit vmap_base(const Compare &comp, Container &&storage)
         : m_key_comp(comp), m_value_comp(comp), m_storage(std::move(storage))
         {
+            std::sort(m_storage.begin(), m_storage.end(), m_value_comp);
+            m_storage.erase(std::unique(m_storage.begin(), m_storage.end()), m_storage.end());
         }
 
         explicit vmap_base(Container &&storage)
         : m_key_comp(key_compare()), m_value_comp(key_compare()), m_storage(std::move(storage))
         {
+            std::sort(m_storage.begin(), m_storage.end(), m_value_comp);
+            m_storage.erase(std::unique(m_storage.begin(), m_storage.end()), m_storage.end());
         }
 
         vmap_base(const vmap_base &other)
