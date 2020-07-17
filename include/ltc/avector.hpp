@@ -25,9 +25,20 @@ namespace ltc
         using const_reverse_iterator = typename storage_type::const_reverse_iterator;
 
         avector() { m_end = m_storage.begin(); }
+        avector(avector &&other)
+        {
+            m_end = std::move(other.begin(), other.end(), m_storage.begin());
+            other.m_end = other.begin();
+        }
+
         avector(std::initializer_list<T> init)
         {
             m_end = std::move(init.begin(), init.end(), m_storage.begin());
+        }
+        template<typename InputIter>
+        avector(InputIter first, InputIter last)
+        {
+            m_end = std::copy(first, last, m_storage.begin());
         }
 
         // Iterators
@@ -142,7 +153,7 @@ namespace ltc
 
         iterator erase(const_iterator pos)
         {
-            assert(pos >= m_storage.begin() && pos < m_end);
+            assert(pos >= m_storage.begin() && pos <= m_end);
             iterator it = m_storage.begin() + (pos - m_storage.begin());
             std::move(it + 1, m_end, it);
             pop_back();
@@ -151,8 +162,8 @@ namespace ltc
 
         iterator erase(const_iterator first, const_iterator last)
         {
-            assert(first >= m_storage.begin() && first < m_end);
-            assert(last >= m_storage.begin() && last < m_end);
+            assert(first >= m_storage.begin() && first <= m_end);
+            assert(last >= m_storage.begin() && last <= m_end);
             assert(first <= last);
             iterator it = m_storage.begin() + (first - m_storage.begin());
             if (first != last)
@@ -180,7 +191,7 @@ namespace ltc
 
         void pop_back()
         {
-            assert(m_end > cbegin());
+            assert(m_end > begin());
             --m_end;
             m_end->~T();
             new (m_end) T();
