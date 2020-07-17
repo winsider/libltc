@@ -21,27 +21,20 @@ TEST_F(Test_amap, default_construct)
     ASSERT_TRUE(m1.empty());
 }
 
-// TEST_F(Test_vmap, compare_construct)
-// {
-//     vmap<std::string, int> m1{ std::less<std::string>() };
-//     ASSERT_EQ(m1.size(), 0);
-//     ASSERT_TRUE(m1.empty());
-// }
+TEST_F(Test_amap, compare_construct)
+{
+    amap<std::string, int, 50> m1{ std::less<std::string>() };
+    ASSERT_EQ(m1.size(), 0);
+    ASSERT_TRUE(m1.empty());
+}
 
-// TEST_F(Test_vmap, allocator_construct)
-// {
-//     vmap<std::string, int> m1{ std::allocator<std::pair<std::string, int>>() };
-//     ASSERT_EQ(m1.size(), 0);
-//     ASSERT_TRUE(m1.empty());
-// }
-
-// TEST_F(Test_vmap, range_construct)
-// {
-//     std::vector<std::pair<std::string, int>> v = { { "one", 1 }, { "two", 2 }, { "three", 3 } };
-//     vmap<std::string, int> m1{ v.begin(), v.end() };
-//     ASSERT_EQ(m1.size(), 3);
-//     ASSERT_FALSE(m1.empty());
-// }
+TEST_F(Test_amap, range_construct)
+{
+    std::vector<std::pair<std::string, int>> v = { { "one", 1 }, { "two", 2 }, { "three", 3 } };
+    amap<std::string, int, 50> m1{ v.begin(), v.end() };
+    ASSERT_EQ(m1.size(), 3);
+    ASSERT_FALSE(m1.empty());
+}
 
 // TEST_F(Test_vmap, allocator_range_construct)
 // {

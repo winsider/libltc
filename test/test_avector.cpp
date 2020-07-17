@@ -40,6 +40,17 @@ TEST_F(Test_avector, constructor_initializer_list)
     ASSERT_EQ(to_str(v.begin(), v.end()), "123");
 }
 
+TEST_F(Test_avector, constructor_iterators)
+{
+    std::vector<std::string> i = { "1", "2", "3" };
+    avector<std::string, 5> v(i.begin(), i.end());
+    ASSERT_FALSE(v.empty());
+    ASSERT_EQ(v.size(), 3);
+    ASSERT_EQ(v.max_size(), 5);
+    ASSERT_EQ(v.capacity(), 5);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "123");
+}
+
 TEST_F(Test_avector, iterators)
 {
     avector<int, 5> v = { 1, 2, 3 };
