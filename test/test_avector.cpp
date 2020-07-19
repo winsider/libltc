@@ -40,6 +40,17 @@ TEST_F(Test_avector, constructor_initializer_list)
     ASSERT_EQ(to_str(v.begin(), v.end()), "123");
 }
 
+TEST_F(Test_avector, constructor_copy)
+{
+    avector<int, 5> i = { 1, 2, 3 };
+    avector<int, 5> v(i);
+    ASSERT_FALSE(v.empty());
+    ASSERT_EQ(v.size(), 3);
+    ASSERT_EQ(v.max_size(), 5);
+    ASSERT_EQ(v.capacity(), 5);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "123");
+}
+
 TEST_F(Test_avector, constructor_iterators)
 {
     std::vector<std::string> i = { "1", "2", "3" };
@@ -49,6 +60,30 @@ TEST_F(Test_avector, constructor_iterators)
     ASSERT_EQ(v.max_size(), 5);
     ASSERT_EQ(v.capacity(), 5);
     ASSERT_EQ(to_str(v.begin(), v.end()), "123");
+}
+
+TEST_F(Test_avector, assignment_copy)
+{
+    avector<std::string, 5> i = { "1", "2", "3" };
+    auto v = i;
+    ASSERT_FALSE(v.empty());
+    ASSERT_EQ(v.size(), 3);
+    ASSERT_EQ(v.max_size(), 5);
+    ASSERT_EQ(v.capacity(), 5);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "123");
+    ASSERT_EQ(to_str(i.begin(), i.end()), "123");
+}
+
+TEST_F(Test_avector, assignment_move)
+{
+    avector<std::string, 5> i = { "1", "2", "3" };
+    auto v = std::move(i);
+    ASSERT_FALSE(v.empty());
+    ASSERT_EQ(v.size(), 3);
+    ASSERT_EQ(v.max_size(), 5);
+    ASSERT_EQ(v.capacity(), 5);
+    ASSERT_EQ(to_str(v.begin(), v.end()), "123");
+    ASSERT_EQ(to_str(i.begin(), i.end()), "");
 }
 
 TEST_F(Test_avector, iterators)

@@ -25,6 +25,7 @@ namespace ltc
         using const_reverse_iterator = typename storage_type::const_reverse_iterator;
 
         avector() { m_end = m_storage.begin(); }
+        
         avector(avector &&other)
         {
             m_end = std::move(other.begin(), other.end(), m_storage.begin());
@@ -35,10 +36,29 @@ namespace ltc
         {
             m_end = std::move(init.begin(), init.end(), m_storage.begin());
         }
-        template<typename InputIter>
-        avector(InputIter first, InputIter last)
+
+        avector(const avector &other) : m_storage(other.m_storage)
+        {
+            m_end = begin() + other.size();
+        }
+
+        template <typename InputIter> avector(InputIter first, InputIter last)
         {
             m_end = std::copy(first, last, m_storage.begin());
+        }
+
+        // Operators
+        avector &operator=(const avector &other)
+        {
+            m_end = std::copy(other.begin(), other.end(), m_storage.begin());
+            return *this;
+        }
+
+        avector &operator=(avector &&other)
+        {
+            m_end = std::move(other.begin(), other.end(), m_storage.begin());
+            other.m_end = other.begin();
+            return *this;
         }
 
         // Iterators
@@ -63,7 +83,9 @@ namespace ltc
             if (new_cap > m_storage.max_size()) throw std::length_error("new_cap");
         }
         size_type capacity() const noexcept { return N; }
-        void shrink_to_fit() { /* no op */}
+        void shrink_to_fit()
+        { /* no op */
+        }
 
         // Element access
         reference at(size_type pos) { return m_storage[pos]; }
@@ -222,4 +244,4 @@ namespace ltc
         iterator m_end;
         storage_type m_storage;
     };
-}
+} // namespace ltc
