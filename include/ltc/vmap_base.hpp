@@ -8,8 +8,7 @@
 
 namespace ltc
 {
-    template <class Container, class Compare>
-    class vmap_base
+    template <class Container, class Compare> class vmap_base
     {
     public:
         using key_type = typename Container::value_type::first_type;
@@ -40,8 +39,7 @@ namespace ltc
         // Construction
         vmap_base() : m_key_comp(key_compare()), m_value_comp(key_compare()), m_storage() {}
 
-        explicit vmap_base(const Compare &comp)
-        : m_key_comp(comp), m_value_comp(comp), m_storage()
+        explicit vmap_base(const Compare &comp) : m_key_comp(comp), m_value_comp(comp), m_storage()
         {
         }
 
@@ -307,4 +305,4 @@ namespace ltc
     private:
         storage_type m_storage;
     };
-}
+} // namespace ltc

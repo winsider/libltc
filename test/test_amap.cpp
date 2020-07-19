@@ -36,72 +36,48 @@ TEST_F(Test_amap, range_construct)
     ASSERT_FALSE(m1.empty());
 }
 
-// TEST_F(Test_vmap, allocator_range_construct)
-// {
-//     std::vector<std::pair<std::string, int>> v = { { "one", 1 }, { "two", 2 }, { "three", 3 } };
-//     vmap<std::string, int> m1{ v.begin(), v.end(), std::allocator<std::pair<std::string, int>>() };
-//     ASSERT_EQ(m1.size(), 3);
-//     ASSERT_FALSE(m1.empty());
-// }
+TEST_F(Test_amap, initializer_list_construct)
+{
+    amap<std::string, int, 50> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
+    ASSERT_EQ(m.size(), 3);
+    ASSERT_EQ(m.at("1"), 1);
+    ASSERT_EQ(m.at("2"), 2);
+    ASSERT_EQ(m.at("3"), 3);
+}
 
-// TEST_F(Test_vmap, copy_construct)
-// {
-//     const vmap<std::string, int> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
-//     auto mc = vmap<std::string, int>(m);
-//     ASSERT_EQ(mc.size(), 3);
-//     ASSERT_EQ(m.size(), 3);
-// }
+TEST_F(Test_amap, copy_construct)
+{
+    const amap<std::string, int, 50> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
+    auto mc = amap<std::string, int, 50>(m);
+    ASSERT_EQ(mc.size(), 3);
+    ASSERT_EQ(m.size(), 3);
+}
 
-// TEST_F(Test_vmap, copy_alloc_construct)
-// {
-//     const vmap<std::string, int> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
-//     auto mc = vmap<std::string, int>(m, std::allocator<std::pair<std::string, int>>());
-//     ASSERT_EQ(mc.size(), 3);
-//     ASSERT_EQ(m.size(), 3);
-// }
+TEST_F(Test_amap, move_construct)
+{
+    amap<std::string, int, 50> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
+    auto mc = amap<std::string, int, 50>(std::move(m));
+    ASSERT_EQ(mc.size(), 3);
+    ASSERT_EQ(m.size(), 0);
+}
 
-// TEST_F(Test_vmap, move_construct)
-// {
-//     vmap<std::string, int> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
-//     auto mc = vmap<std::string, int>(std::move(m));
-//     ASSERT_EQ(mc.size(), 3);
-//     ASSERT_EQ(m.size(), 0);
-// }
+TEST_F(Test_amap, assignment_copy)
+{
+    amap<std::string, int, 50> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
+    amap<std::string, int, 50> mc;
+    mc = m;
+    ASSERT_EQ(mc.size(), 3);
+    ASSERT_EQ(m.size(), 3);
+}
 
-// TEST_F(Test_vmap, move_alloc_construct)
-// {
-//     vmap<std::string, int> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
-//     auto mc = vmap<std::string, int>(std::move(m), std::allocator<std::pair<std::string, int>>());
-//     ASSERT_EQ(mc.size(), 3);
-//     ASSERT_EQ(m.size(), 0);
-// }
-
-// TEST_F(Test_vmap, initializer_list_construct)
-// {
-//     vmap<std::string, int> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
-//     ASSERT_EQ(m.size(), 3);
-//     ASSERT_EQ(m.at("1"), 1);
-//     ASSERT_EQ(m.at("2"), 2);
-//     ASSERT_EQ(m.at("3"), 3);
-// }
-
-// TEST_F(Test_vmap, assignment)
-// {
-//     vmap<std::string, int> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
-//     vmap<std::string, int> mc;
-//     mc = m;
-//     ASSERT_EQ(mc.size(), 3);
-//     ASSERT_EQ(m.size(), 3);
-// }
-
-// TEST_F(Test_vmap, assignment_move)
-// {
-//     vmap<std::string, int> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
-//     vmap<std::string, int> mc;
-//     mc = std::move(m);
-//     ASSERT_EQ(mc.size(), 3);
-//     ASSERT_EQ(m.size(), 0);
-// }
+TEST_F(Test_amap, assignment_move)
+{
+    amap<std::string, int, 50> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
+    amap<std::string, int, 50> mc;
+    mc = std::move(m);
+    ASSERT_EQ(mc.size(), 3);
+    ASSERT_EQ(m.size(), 0);
+}
 
 // TEST_F(Test_vmap, assignment_initializer_list)
 // {
