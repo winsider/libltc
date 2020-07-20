@@ -25,7 +25,7 @@ namespace ltc
         using const_reverse_iterator = typename storage_type::const_reverse_iterator;
 
         avector() { m_end = m_storage.begin(); }
-        
+
         avector(avector &&other)
         {
             m_end = std::move(other.begin(), other.end(), m_storage.begin());
@@ -58,6 +58,12 @@ namespace ltc
         {
             m_end = std::move(other.begin(), other.end(), m_storage.begin());
             other.m_end = other.begin();
+            return *this;
+        }
+
+        avector &operator=(std::initializer_list<value_type> ilist)
+        {
+            m_end = std::move(ilist.begin(), ilist.end(), m_storage.begin());
             return *this;
         }
 
@@ -239,6 +245,8 @@ namespace ltc
                     pop_back();
             }
         }
+
+        void swap(avector &other) noexcept { std::swap(*this, other); }
 
     private:
         iterator m_end;

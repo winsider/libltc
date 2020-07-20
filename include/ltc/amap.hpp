@@ -42,5 +42,11 @@ namespace ltc
             *(static_cast<base_type *>(this)) = std::move(other);
             return *this;
         }
+
+        amap &operator=(std::initializer_list<typename base_type::value_type> ilist)
+        {
+            *(static_cast<base_type *>(this)) = std::move(ilist);
+            return *this;
+        }
     };
 } // namespace ltc
