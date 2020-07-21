@@ -299,10 +299,10 @@ namespace ltc
         value_compare value_comp() const { return m_value_comp; }
 
     protected:
+
         key_compare m_key_comp;
         value_compare m_value_comp;
 
-    private:
         storage_type m_storage;
     };
 } // namespace ltc

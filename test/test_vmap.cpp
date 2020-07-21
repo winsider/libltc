@@ -28,7 +28,6 @@ TEST_F(Test_vmap, compare_construct)
     ASSERT_TRUE(m1.empty());
 }
 
-
 TEST_F(Test_vmap, allocator_construct)
 {
     vmap<std::string, int> m1{ std::allocator<std::pair<std::string, int>>() };
@@ -87,6 +86,15 @@ TEST_F(Test_vmap, move_alloc_construct)
 TEST_F(Test_vmap, initializer_list_construct)
 {
     vmap<std::string, int> m = { { "3", 3 }, { "2", 2 }, { "1", 1 } };
+    ASSERT_EQ(m.size(), 3);
+    ASSERT_EQ(m.at("1"), 1);
+    ASSERT_EQ(m.at("2"), 2);
+    ASSERT_EQ(m.at("3"), 3);
+}
+
+TEST_F(Test_vmap, initializer_list_construct_alloc)
+{
+    vmap<std::string, int> m { { { "3", 3 }, { "2", 2 }, { "1", 1 } }, std::allocator<std::pair<std::string, int>>()};
     ASSERT_EQ(m.size(), 3);
     ASSERT_EQ(m.at("1"), 1);
     ASSERT_EQ(m.at("2"), 2);
