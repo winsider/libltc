@@ -5,6 +5,9 @@ Simple C++ boot project for getting started with a CMake C++ project quickly.
      $ cd yourprojectname
      $ ./init.sh yourprojectname
     
+## Build
+Create a directory called build and change to this folder.
+
 To regenerate make files:
      
      cmake -DCMAKE_BUILD_TYPE=Release ..
