@@ -79,3 +79,9 @@ TEST_F(Test_bloom, possibly_contains)
     ASSERT_EQ(filter.count(), in_filter);
     ASSERT_GT(not_in_filter, in_filter);
 }
+
+TEST_F(Test_bloom, calculator)
+{
+    bloom_calculator c;
+    ASSERT_EQ(c.items(), 4000);
+}
