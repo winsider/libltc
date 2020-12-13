@@ -4,7 +4,7 @@
 
 namespace ltc
 {
-    class bloom_calculator
+    class bloom_calculator final
     {
     public:
         bloom_calculator() : m_items(4000), m_probability(0.0000001), m_bits(134191), m_hashes(23)
@@ -60,11 +60,8 @@ namespace ltc
 
     private:
         void calc_n() { m_items = calc_items(m_bits, m_hashes, m_probability); }
-
         void calc_p() { m_probability = calc_probability(m_bits, m_hashes, m_items); }
-
         void calc_m() { m_bits = calc_bits(m_items, m_probability); }
-
         void calc_k() { m_hashes = calc_hashes(m_bits, m_items); }
 
         uint64_t m_items;
