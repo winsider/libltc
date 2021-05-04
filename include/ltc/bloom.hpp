@@ -4,6 +4,10 @@
 
 namespace ltc
 {
+    // https://hur.st/bloomfilter/?n=40000000000&p=1.0E-6&m=&k=30
+    // https://llimllib.github.io/bloomfilter-tutorial/
+    // https://findingprotopia.org/posts/how-to-write-a-bloom-filter-cpp/
+    
     class bloom_calculator final
     {
     public:
