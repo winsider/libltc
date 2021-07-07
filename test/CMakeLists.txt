@@ -8,6 +8,7 @@ add_executable(test_ltc
 	test_avector.cpp
 	test_amap.cpp
 	test_bloom.cpp
+	test_btree.cpp
 )
 
 target_link_libraries(test_ltc gtest gtest_main libltc)

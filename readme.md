@@ -23,3 +23,8 @@ To add imgui to the project:
     $ git submodule add https://github.com/ocornut/imgui.git imgui
 
 
+
+
+find
+insert
+erase
